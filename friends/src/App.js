@@ -1,26 +1,47 @@
-import React, { useState } from "react";
-import logo from "./logo.svg";
-import "./App.css";
+import React from "react";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect,
+} from "react-router-dom";
+import Form from "./Form";
+import FriendsList from "./FriendsList";
 
 function App() {
-  const [form, setForm] = useState({});
-
-  const handleInput = (e) => {
-    setForm({
-      ...form,
-      [e.target.name]: e.target.value,
-    });
+  const PrivateRoute = ({ component: Component, ...rest }) => {
+    return (
+      <Route
+        {...rest}
+        render={(props) =>
+          localStorage.getItem("token") ? (
+            <Component {...props} />
+          ) : (
+            <Redirect to="/login" />
+          )
+        }
+      />
+    );
   };
 
-  const handleSubmit = () => {};
-
   return (
-    <div className="App">
-      <form onSubmit={this.handleInput}>
-        <input type="text" name="username" />
-        <input type="password" name="password" />
-      </form>
-    </div>
+    <Router>
+      <div className="App">
+        <ul>
+          <li>
+            <Link to="/login">Login</Link>
+          </li>
+          <li>
+            <Link to="/home">Friends List</Link>
+          </li>
+        </ul>
+        <Switch>
+          <Route path="/login" component={Form} />
+          <PrivateRoute path="/home" component={FriendsList} />
+        </Switch>
+      </div>
+    </Router>
   );
 }
 
